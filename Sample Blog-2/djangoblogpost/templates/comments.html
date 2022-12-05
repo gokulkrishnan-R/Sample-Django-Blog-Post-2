@@ -1,0 +1,21 @@
+
+
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Comments</title>
+{% endblock %}
+
+{% block body %}
+
+<h1>Comments:</h1>
+
+<form action="" method="POST">
+
+    {% csrf_token %}
+    {{ form.as_p }}    
+    <input class="btn btn-primary" type="submit" value="Post this comment">
+
+</form>
+
+{% endblock %} -->

@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block head %}
+    <title>All Posts</title>
+
+{% block user %}
+
+    {% if request.user.is_authenticated %}
+    <a style="position: absolute; right: 400px;" ="navbar-item-active" href="#">Welcome {{ request.user }}</a>
+    {% elif request.user.is_anonymous %}
+    <a style="position: absolute; right: 400px;" ="navbar-item-active" href="#"></a>
+    {% endif %}
+
+{% endblock %}
+
+{% endblock %}
+
+{% block body %}
+
+<br>    
+    <h1 style="display: inline; ">All Posts</h1>
+            {% if request.user.is_authenticated %}
+                <a class="btn btn-success float-end" href="newpost/"> +New Post</a>
+            {% endif %}
+            {% if not request.user.is_authenticated %}
+                <a class="btn btn-success float-end" href="/login/"> Login</a>
+                <a class="btn btn-success float-end" href="/register/"> Sign-Up</a>
+            {% endif %}
+            {% if request.user.is_authenticated %}
+                <a class="btn btn-success float-end" href="/logout/"> Log-out {{ request.user }}</a>
+            {% endif %}
+<hr>
+<br>
+
+<form action="newpost/" method="POST" enctype= "multipart/form-data" >
+    
+    {% csrf_token %}
+    
+    {% for i in objects %}
+    
+    <div class="container">
+        {% if i.title %}
+    <div class="spacing">
+    <h6>Title: {{ i.title }}</h6>
+    </div>
+</div>
+    
+{% else %}
+<h6>No Title</h6>
+{% endif %}
+
+<br>
+{% if i.image %}
+    <div class="container">
+        <img src = "{{ MEDIA_URL }}/{{ i.image }}" class="card-img-top" alt="..." height="750px" width="10%">
+    </div>
+{% endif %}
+
+{% if i.content %}
+    <div class="container">
+        <p class="lead" class="bg-info"><h6 style="border: width 40%; height: auto; padding: 10px; background-color: #e3eaca;">Post: {{ i.content }} <small> <br> <br>Posted by: {{ i.author }} on {{ i.posted_on }}</h3></small></h6></div></p> 
+{% else %}
+    <h3>No Content</h3>
+{% endif %}
+
+{% if i.author %}
+    <div class="container">
+        
+    </div>
+{% else %}
+        <h3>No Author:(N/A)</h3>
+{% endif %}
+
+
+<div style="padding: 13.5px;" class="container">
+    {% if request.user.is_authenticated %}
+        <small><a class="btn btn-primary" href="update/{{ i.id }}">Update Post</a></small>
+        <a class="btn btn-danger"href="delete/{{ i.id }}">Delete Post</a>
+        <a class="btn btn-danger"href="comments/{{ i.id }}">Comment for this Post</a>
+        <br>
+    {% endif %}
+    <br>
+   <!-- <small>No of Comments { 0 Comments }</small> -->
+    <h5>No.of comments ({{ i.comments.count }}) </h5>
+    <br>
+
+    {% if not i.comments.all %}
+
+        <p style="border: width 40%; height: auto; padding: 10px; background-color: #e8ebdf;">No comments added yet!</p>
+
+    {% else %}
+        {% for comment in i.comments.all %}
+            <h5 style="border: width 40px; height: auto;; padding: 10px; background-color: #dae2bc;"><strong>{{ comment.name }}<br><br> <h6>{{ comment.comment_body }}</h6>  <h6><small>{{ comment.posted_on }}</small></h6> </strong></h5>
+            <br>
+            {% if user.is_authenticated %}
+                <a class="btn btn-danger"href="{% url 'delete_comments' i.id %}">Delete Comment</a>
+            {% endif %}
+        </p>
+
+        {% endfor %}
+
+    {% endif %}   
+
+</div>
+<hr>
+
+<div class="container">
+ 
+</form>
+          
+    </div>
+    
+<br>
+{% endfor %}
+    
+{% if not request.user.is_authenticated %}
+    <div class="container">
+        
+        <h4><a href="/login/">Login</a> to post comments below.</h4>
+        <small>Don't have an account? No problem you can <a href="/register/">create here!</a></small>            
+    </div>
+{% endif %}
+
+    {% endblock %}
+</form>
